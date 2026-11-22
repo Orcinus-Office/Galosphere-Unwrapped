@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Galosphere - UNWRAPPED: 14 days of underground Minecraft features. Crystal Glitters, Rock Candy, Silencer, Healing Cloud, and more.">
+    <title>GALOSPHERE - UNWRAPPED</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #1a1a2e;
+            --card-bg: #16213e;
+            --accent-1: #0f3460;
+            --accent-2: #e94560;
+            --crystal: #a8e6cf;
+            --rock-candy: #ffb6b9;
+            --silencer: #b8c6db;
+            --healing: #98ff98;
+            --hopper: #ffd700;
+            --plate: #8a8a8a;
+            --gauntlet: #b87333;
+            --glowworm: #00ffcc;
+            --cinder: #ff4500;
+            --firepit: #ffaa00;
+            --painting: #c77dff;
+            --palladium: #e0e0e0;
+            --comparator: #ff0055;
+            --relay: #00aaff;
+            --text-main: #eaeaea;
+            --text-dim: #a0a0b0;
+            --nav-height: 56px;
+            --nav-offset: 72px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; scroll-padding-top: var(--nav-offset); }
+
+        body {
+            background-color: var(--bg-color);
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(15, 52, 96, 0.5) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(233, 69, 96, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 50% 80%, rgba(168, 230, 207, 0.05) 0%, transparent 50%);
+            color: var(--text-main);
+            font-family: 'Quicksand', sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        #star-container {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+            contain: strict;
+        }
+
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            background: white;
+            opacity: 0;
+            will-change: opacity, transform;
+            animation: shine var(--duration) infinite ease-in-out var(--delay);
+            box-shadow: 0 0 6px 2px rgba(255,255,255,0.8), 0 0 12px 4px rgba(200,230,255,0.4);
+        }
+
+        .star.bright::before,
+        .star.bright::after {
+            content: '';
+            position: absolute;
+            background: rgba(255,255,255,0.7);
+            border-radius: 2px;
+        }
+        .star.bright::before { top: 50%; left: -100%; width: 300%; height: 1px; transform: translateY(-50%); }
+        .star.bright::after  { left: 50%; top: -100%; height: 300%; width: 1px; transform: translateX(-50%); }
+
+        @keyframes shine {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            40%, 60% { opacity: 1; transform: scale(1); }
+            50%      { opacity: 1; transform: scale(1.3); }
+        }
+
+        .feature-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(22, 33, 62, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--accent-1);
+            height: var(--nav-height);
+            display: flex;
+            align-items: center;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-2) transparent;
+            padding: 0 12px;
+            gap: 6px;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-x: contain;
+        }
+
+        .feature-nav::-webkit-scrollbar { height: 6px; }
+        .feature-nav::-webkit-scrollbar-track { background: transparent; }
+        .feature-nav::-webkit-scrollbar-thumb { background: var(--accent-2); border-radius: 3px; }
+
+        .nav-link {
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 700;
+            white-space: nowrap;
+            border: 1px solid transparent;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link:focus-visible {
+            background: var(--accent-1);
+            color: var(--text-main);
+            border-color: var(--crystal);
+            outline: none;
+        }
+
+        .nav-link.active {
+            background: var(--accent-2);
+            color: white;
+            border-color: var(--accent-2);
+        }
+
+        .nav-link .nav-num {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.6rem;
+            opacity: 0.9;
+        }
+
+        .nav-skip {
+            position: absolute;
+            left: -9999px;
+            top: 8px;
+            padding: 8px 16px;
+            background: var(--accent-2);
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            z-index: 200;
+        }
+        .nav-skip:focus { left: 12px; }
+
+        header {
+            text-align: center;
+            padding: 80px 20px 40px;
+            border-bottom: 2px solid var(--accent-1);
+            margin-bottom: 40px;
+            background: linear-gradient(180deg, rgba(22,33,62,0.8) 0%, transparent 100%);
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--accent-2);
+            color: white;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(233,69,96,0.7); }
+            50%      { transform: scale(1.05); box-shadow: 0 0 20px 10px rgba(233,69,96,0); }
+        }
+
+        h1 {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 3.5rem;
+            color: var(--crystal);
+            text-shadow: 4px 4px 0 #0a0a0a, -2px -2px 0 #0a0a0a, 2px -2px 0 #0a0a0a, -2px 2px 0 #0a0a0a, 0 0 20px rgba(168,230,207,0.4);
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+            line-height: 1.4;
+            text-transform: uppercase;
+        }
+
+        .subtitle { font-size: 1.2rem; color: var(--text-dim); max-width: 600px; margin: 0 auto; }
+
+        .scroll-hint {
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
+
+        .timeline { max-width: 900px; margin: 0 auto; padding: 20px; position: relative; }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--accent-1), var(--accent-2), var(--accent-1));
+            border-radius: 2px;
+            opacity: 0.5;
+        }
+
+        .day-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 60px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: calc(100% - 40px);
+            margin-left: auto;
+            margin-right: auto;
+            z-index: 1;
+            scroll-margin-top: var(--nav-offset);
+        }
+
+        .day-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.5); }
+
+        .day-card:target { animation: targetPulse 1.5s ease-out; }
+
+        @keyframes targetPulse {
+            0%   { box-shadow: 0 0 0 0 rgba(233, 69, 96, 0.8); }
+            50%  { box-shadow: 0 0 0 10px rgba(233, 69, 96, 0); }
+            100% { box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        }
+
+        .day-card:nth-child(1)  { border-left: 4px solid var(--crystal); }
+        .day-card:nth-child(2)  { border-left: 4px solid var(--rock-candy); }
+        .day-card:nth-child(3)  { border-left: 4px solid var(--silencer); }
+        .day-card:nth-child(4)  { border-left: 4px solid var(--healing); }
+        .day-card:nth-child(5)  { border-left: 4px solid var(--hopper); }
+        .day-card:nth-child(6)  { border-left: 4px solid var(--plate); }
+        .day-card:nth-child(7)  { border-left: 4px solid var(--gauntlet); }
+        .day-card:nth-child(8)  { border-left: 4px solid var(--glowworm); }
+        .day-card:nth-child(9)  { border-left: 4px solid var(--cinder); }
+        .day-card:nth-child(10) { border-left: 4px solid var(--firepit); }
+        .day-card:nth-child(11) { border-left: 4px solid var(--painting); }
+        .day-card:nth-child(12) { border-left: 4px solid var(--palladium); }
+        .day-card:nth-child(13) { border-left: 4px solid var(--comparator); }
+        .day-card:nth-child(14) { border-left: 4px solid var(--relay); }
+
+        .day-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+
+        .day-number {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 1.8rem;
+            color: var(--accent-2);
+            line-height: 1;
+            opacity: 0.8;
+        }
+
+        .day-title { font-size: 1.8rem; font-weight: 700; color: var(--text-main); }
+        .feature-icon { font-size: 2.5rem; margin-left: auto; }
+
+        .description { color: var(--text-dim); font-size: 1.05rem; margin-bottom: 20px; }
+
+        .details-box {
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 3px solid var(--accent-1);
+        }
+
+        .details-box h4 {
+            color: var(--crystal);
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .details-box ul { list-style: none; padding: 0; }
+
+        .details-box li {
+            padding: 8px 0 8px 25px;
+            position: relative;
+            font-size: 0.95rem;
+        }
+
+        .details-box li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--accent-2);
+            font-weight: bold;
+        }
+
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
+
+        .tag {
+            background: var(--accent-1);
+            color: var(--text-main);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tag.green  { background: rgba(168,230,207,0.2); color: var(--crystal);    border: 1px solid var(--crystal); }
+        .tag.pink   { background: rgba(255,182,185,0.2); color: var(--rock-candy); border: 1px solid var(--rock-candy); }
+        .tag.blue   { background: rgba(184,198,219,0.2); color: var(--silencer);   border: 1px solid var(--silencer); }
+        .tag.heal   { background: rgba(152,255,152,0.2); color: var(--healing);    border: 1px solid var(--healing); }
+        .tag.gold   { background: rgba(255,215,0,0.2);   color: var(--hopper);     border: 1px solid var(--hopper); }
+        .tag.orange { background: rgba(255,69,0,0.2);    color: var(--cinder);     border: 1px solid var(--cinder); }
+        .tag.fire   { background: rgba(255,170,0,0.2);   color: var(--firepit);    border: 1px solid var(--firepit); }
+        .tag.purple { background: rgba(199,125,255,0.2); color: var(--painting);   border: 1px solid var(--painting); }
+        .tag.silver { background: rgba(224,224,224,0.2); color: var(--palladium);  border: 1px solid var(--palladium); }
+        .tag.red    { background: rgba(255,0,85,0.2);    color: var(--comparator); border: 1px solid var(--comparator); }
+        .tag.aqua   { background: rgba(0,170,255,0.2);   color: var(--relay);      border: 1px solid var(--relay); }
+
+        .compat-callout {
+            margin-top: 15px;
+            padding: 10px 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            border-left: 2px solid var(--healing);
+        }
+
+        .compat-callout strong { color: var(--healing); }
+
+        .concept-art {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: block;
+            border: 2px solid rgba(255,69,0,0.3);
+        }
+
+        footer {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-dim);
+            border-top: 1px solid var(--accent-1);
+            margin-top: 40px;
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        footer .heart {
+            color: var(--accent-2);
+            animation: heartbeat 1.5s infinite;
+            display: inline-block;
+        }
+
+        @keyframes heartbeat { 0%,100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+
+        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; will-change: opacity, transform; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .day-title { font-size: 1.3rem; }
+            .day-number { font-size: 1.2rem; }
+            .feature-icon { font-size: 1.8rem; }
+            .timeline::before { left: 20px; }
+            .day-card { width: 100%; margin-left: 0; }
+            .nav-link { font-size: 0.7rem; padding: 6px 10px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            .fade-in { opacity: 1; transform: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="star-container" aria-hidden="true"></div>
+
+    <a href="#main-content" class="nav-skip">Skip to features</a>
+
+    <nav class="feature-nav" aria-label="Feature navigation">
+        <a href="#day-01" class="nav-link"><span class="nav-num">01</span> Crystal Glitters</a>
+        <a href="#day-02" class="nav-link"><span class="nav-num">02</span> Rock Candy</a>
+        <a href="#day-03" class="nav-link"><span class="nav-num">03</span> Silencer</a>
+        <a href="#day-04" class="nav-link"><span class="nav-num">04</span> Healing Cloud</a>
+        <a href="#day-05" class="nav-link"><span class="nav-num">05</span> Atuned Hopper</a>
+        <a href="#day-06" class="nav-link"><span class="nav-num">06</span> Stone Plates</a>
+        <a href="#day-07" class="nav-link"><span class="nav-num">07</span> Gauntlet</a>
+        <a href="#day-08" class="nav-link"><span class="nav-num">08</span> Glow Worms</a>
+        <a href="#day-09" class="nav-link"><span class="nav-num">09</span> Cinderpot</a>
+        <a href="#day-10" class="nav-link"><span class="nav-num">10</span> Fire Pit</a>
+        <a href="#day-11" class="nav-link"><span class="nav-num">11</span> Temple Painting</a>
+        <a href="#day-12" class="nav-link"><span class="nav-num">12</span> Palladium Retexture</a>
+        <a href="#day-13" class="nav-link"><span class="nav-num">13</span> Block Comparator</a>
+        <a href="#day-14" class="nav-link"><span class="nav-num">14</span> Relay</a>
+    </nav>
+
+    <header>
+        <div class="badge">Update Announcement</div>
+        <h1>GALOSPHERE</h1>
+        <h2 style="font-family: 'Press Start 2P', monospace; font-size: 1.5rem; color: var(--accent-2); margin-top: 5px; text-shadow: 2px 2px 0 #0a0a0a;">UNWRAPPED</h2>
+        <p class="subtitle">The underground is about to get a whole lot more interesting. Fourteen days of features. One vanilla-friendly overhaul.</p>
+        <div class="scroll-hint">▼ Scroll to explore ▼</div>
+    </header>
+
+    <main class="timeline" id="main-content">
+
+        <!-- DAY 1 -->
+        <article class="day-card fade-in" id="day-01" aria-labelledby="title-01">
+            <div class="day-header">
+                <span class="day-number">01</span>
+                <h2 class="day-title" id="title-01">Crystal Glitters</h2>
+                <span class="feature-icon" aria-hidden="true">✨</span>
+            </div>
+            <p class="description">A new pretty decorative feature made from crystal! These delicate shards act just like pink petals in Minecraft — place them in a cluster of up to four to create shimmering underground gardens.</p>
+            <div class="details-box">
+                <h4>Feature Breakdown</h4>
+                <ul>
+                    <li>Crafted from crystal fragments (new recipe!)</li>
+                    <li>Place up to 4 in a single block space</li>
+                    <li>Naturally generates in crystal caves</li>
+                    <li>Purely decorative — no light emission, but they sparkle!</li>
+                </ul>
+                <div class="tags">
+                    <span class="tag green">Decoration</span>
+                    <span class="tag">Vanilla-Friendly</span>
+                    <span class="tag">Crystal</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- DAY 2 -->
+        <article class="day-card fade-in" id="day-02" aria-labelledby="title-02">
+            <div class="day-header">
+                <span class="day-number">02</span>
+                <h2 class="day-title" id="title-02">Rock Candy</h2>
+                <span class="feature-icon" aria-hidden="true">🍬</span>
+            </div>
+            <p class="description">A yummy new treat for your underground explorations! Rock Candy is a food item made from crystals and sugar. It's the perfect snack to keep your hunger bar full while you dig deeper.</p>
+            <div class="details-box">
+                <h4>Feature Breakdown</h4>
+                <ul>
+                    <li>Crafted with sugar + crystal shards</li>
+                    <li>Restores hunger and gives a small speed boost</li>
+                    <li>Stackable to 16 (it's candy, after all)</li>
+                    <li>Comes in different colors based on crystal type</li>
+                </ul>
+                <div class="tags">
+                    <span class="tag pink">Food</span>
+                    <span class="tag">Exploration</span>
+                    <span class="tag">Crystal</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- DAY 3 -->
+        <article class="day-card fade-in" id="day-03" aria-labelledby="title-03">
+            <div class="day-header">
+                <span class="day-number">03</span>
+                <h2 class="day-title" id="title-03">Silencer</h2>
+                <span class="feature-icon" aria-hidden="true">🔇</span>
+            </div>
+            <p class="description">A brand-new redstone mechanic! The Silencer is a block that mutes the sounds of blocks depending on which direction it's facing. Adjust the volume using a redstone comparator signal.</p>
+            <div class="details-box">
+                <h4>Feature Breakdown</h4>
+                <ul>
+                    <li>Directional muting — face it at noisy blocks</li>
+                    <li>Redstone comparator input adjusts volume (0–15)</li>
+                    <li>Perfect for quiet farms and hidden bases</li>
+                    <li>Does not mute hostile mob sounds (sorry!)</li>
+                </ul>
+                <div class="tags">
+                    <span class="tag blue">Redstone</span>
+                    <span class="tag">Utility</span>
+                    <span class="tag">Sound Control</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- DAY 4 -->
+        <article class="day-card fade-in" id="day-04" aria-labelledby="title-04">
+            <div class="day-header">
+                <span class="day-number">04</span>
+                <h2 class="day-title" id="title-04">Healing Cloud</h2>
+                <span class="feature-icon" aria-hidden="true">☁️</span>
+            </div>
+            <p class="description">Ever since Minecraft added Potent Sulfur which exerts noxious gas when above water... why not healing gas when there's a pink salt underneath it? A breath of fresh air for the deep dark.</p>
+            <div class="details-box">
+                <h4>Feature Breakdown</h4>
+                <ul>
+                    <li>Place Pink Salt under Potent Sulfur to create Healing Clouds</li>
+                    <li>Provides regeneration to players who step inside</li>
+                    <li>Particles float upwards, creating a beautiful visual effect</li>
+                    <li>Noxious gas above, healing gas below — use wisely!</li>
+                </ul>
+                <div class="compat-callout">
+                    <strong>Compatibility:</strong> Planned to be fully compatible with <em>Blackgear's Vanilla Backport</em>.
+                </div>
+                <div class="tags" style="margin-top: 15px;">
+                    <span class="tag heal">Utility</span>
+                    <span class="tag">Gas</span>
+                    <span class="tag">Vanilla Backport</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- DAY 5 -->
+        <article class="day-card fade-in" id="day-05" aria-labelledby="title-05">
+            <div class="day-header">
+                <span class="day-number">05</span>
+                <h2 class="day-title" id="title-05">Atuned Hopper</h2>
+                <span class="feature-icon" aria-hidden="true">⚙️</span>
+            </div>
+            <p class="description">The Atuned Hopper is a new mechanical block that acts just like a hopper, except it has a filter on each slot. This allows players to precisely control exactly what items can be filtered out.</p>
+            <div class="details-box">
+                <h4>Feature Breakdown</h4>
+                <ul>
+                    <li>Functions as a standard hopper but with per-slot filtering</li>
+                    <li>Place items in the filter slots to specify what can pass through</li>
+                    <li>Ideal for complex sorting systems and automated storage</li>
+                    <li>Can be toggled on/off with a redstone signal</li>
+                    <li><strong>Crafting:</strong> Made from a Hopper, Allurite Shards, and Palladium Ingots.</li>
+                </ul>
+                <div class="tags">
+                    <span class="tag gold">Redstone</span>
+                    <span class="tag">Logistics</span>
+                    <span class="tag">Utility</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- DAY 6 -->
+        <article class="day-card fade-in" id="day-06" aria-labelledby="title-06">
+            <div class="day-header">
+                <span class="day-number">06</span>
+                <h2 class="day-title" id="title-06">Stone Plates</h2>
+                <span class="feature-icon" aria-hidden="true">🪨</span>
+            </div>
+            <p class="description">A simple but versatile new decorative block. Stone Plates can stack up to 16 items on a singular plate, and you can make them with any kind of stone. Perfect for displaying your treasures.</p>
+            <div class="details-box">
+                <h4>Feature Breakdown</h4>
+                <ul>
+                    <li>Craftable with any stone type (deepslate, granite, etc.)</li>
+                    <li>Holds up to 16 items in a single stack</li>
+                    <li>Items visually render on top of the plate</li>
+                    <li>Right-click to add/remove items</li>
+                </ul>
+                <div class="tags">
+                    <span class="tag">Decoration</span>
+                    <span class="tag">Storage</span>
+                    <span class="tag">Stone</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- DAY 7 -->
+        <article class="day-card fade-in" id="day-07" aria-labelledby="title-07">
+            <div class="day-header">
+                <span class="day-number">07</span>
+                <h2 class="day-title" id="title-07">Gauntlet</h2>
+                <span class="feature-icon" aria-hidden="true">🛠️</span>
+            </div>
+            <p class="description">A new netherite tool that acts like a multitool! It can act like a pickaxe, shovel, axe, hoe... whatever you can think of! The ultimate tool for the ultimate miner.</p>
+            <div class="details-box">
+                <h4>Feature Breakdown</h4>
+                <ul>
+                    <li>Netherite-tier multi-tool (combines pickaxe, shovel, axe, and hoe)</li>
+                    <li>Right-click to cycle between tool modes</li>
+                    <li>Durability scales depending on the block broken</li>
+                    <li>Repairable with netherite ingots</li>
+                </ul>
+                <div class="tags">
+                    <span class="tag" style="background: rgba(184,115,51,0.2); color: #b87333; border: 1px solid #b87333;">Tool</span>
+                    <span class="tag">Netherite</span>
+                    <span class="tag">Multitool</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- DAY 8 -->
+        <article class="day-card fade-in" id="day-08" aria-labelledby="title-08">
+            <div class="day-header">
+                <span class="day-number">08</span>
+                <h2 class="day-title" id="title-08">Glow Worms</h2>
+                <span class="feature-icon" aria-hidden="true">🐛</span>
+            </div>
+            <p class="description">Glow Worms are similar to glow lichen in a sense they're more like blocks than a living creature. But they serve as a beautiful light source underground which would pair perfectly with the glow squids swimming in the aquifers.</p>
+            <div class="details-box">
+                <h4>Feature Breakdown</h4>
+                <ul>
+                    <li>Emits a soft, natural light (light level 10)</li>
+                    <li>Can be placed on ceilings and walls like glow lichen</li>
+                    <li>Emits small particle effects for ambience</li>
+                    <li>Naturally spawns in underground biomes</li>
+                </ul>
+                <div class="tags">
+                    <span class="tag" style="background: rgba(0,255,204,0.2); color: var(--glowworm); border: 1px solid var(--glowworm);">Light Source</span>
+                    <span class="tag">Decoration</span>
+                    <span class="tag">Ambience</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- DAY 9 -->
+        <article class="day-card fade-in" id="day-09" aria-labelledby="title-09">
+            <div class="day-header">
+                <span class="day-number">09</span>
+                <h2 class="day-title" id="title-09">Cinderpot</h2>
+                <span class="feature-icon" aria-hidden="true">🔥</span>
+            </div>
+            <p class="description">Cinderpot is a new cute little mob inspired by the Flame Construct from Minecraft Dungeons II. This mob acts like a block initially but will occasionally peak out. Provoke it, and it will shoot fire at you — or unleash a fiery shockwave!</p>
+            <img src="https://cdn.discordapp.com/attachments/965279556036599909/1573629184662839396/120px-MCD2_Credits_artwork_Deep_Dark_Golem.png?ex=6b040562&is=6b02b3e2&hm=0c13be9eff56945c2ccc4ef12eab8f22db9dbb72a896e735942b6452114dbdd9&" alt="Cinderpot Concept Art" class="concept-art" loading="lazy" width="300" height="300">
+            <div class="details-box">
+                <h4>Feature Breakdown</h4>
+                <ul>
+                    <li>Disguised as a block until it peaks out</li>
+                    <li>Shoots fire projectiles when provoked</li>
+                    <li>Periodically uses a fire shockwave attack</li>
+                    <li>Adds a new threat to underground exploration</li>
+                </ul>
+                <div class="tags">
+                    <span class="tag orange">Hostile Mob</span>
+                    <span class="tag">Fire</span>
+                    <span class="tag">Underground Threat</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- DAY 10 -->
+        <article class="day-card fade-in" id="day-10" aria-labelledby="title-10">
+            <div class="day-header">
+                <span class="day-number">10</span>
+                <h2 class="day-title" id="title-10">Fire Pit</h2>
+                <span class="feature-icon" aria-hidden="true">🔥</span>
+            </div>
+            <p class="description">A new decorative block that you can craft from Cinderpot's drops (i.e. Embers). It's essentially the block version of what they actually look like, bringing a warm, cozy glow to your builds.</p>
+            <div class="details-box">
+                <h4>Feature Breakdown</h4>
+                <ul>
+                    <li>Crafted using Embers dropped by Cinderpots</li>
+                    <li>Matches the aesthetic of the Cinderpot mob</li>
+                    <li>Emits a warm, flickering light</li>
+                    <li>Perfect for underground camps and cozy corners</li>
+                </ul>
+                <div class="tags">
+                    <span class="tag fire">Decoration</span>
+                    <span class="tag">Light Source</span>
+                    <span class="tag">Cinderpot</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- DAY 11 -->
+        <article class="day-card fade-in" id="day-11" aria-labelledby="title-11">
+            <div class="day-header">
+                <span class="day-number">11</span>
+                <h2 class="day-title" id="title-11">Pink Salt Temple Painting</h2>
+                <span class="feature-icon" aria-hidden="true">🖼️</span>
+            </div>
+            <p class="description">A new painting variant that showcases the foreboding Pink Salt Temple with an ominous feel. Hang it on your walls to remind yourself of the dangers that lurk below.</p>
+            <div class="details-box">
+                <h4>Feature Breakdown</h4>
+                <ul>
+                    <li>New painting variant with a unique 2x2 or 3x3 size</li>
+                    <li>Features the Pink Salt Temple in an ominous style</li>
+                    <li>Can be placed like any standard Minecraft painting</li>
+                    <li>Adds more lore and atmosphere to your builds</li>
+                </ul>
+                <div class="tags">
+                    <span class="tag purple">Decoration</span>
+                    <span class="tag">Painting</span>
+                    <span class="tag">Lore</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- DAY 12 -->
+        <article class="day-card fade-in" id="day-12" aria-labelledby="title-12">
+            <div class="day-header">
+                <span class="day-number">12</span>
+                <h2 class="day-title" id="title-12">Palladium Retexture</h2>
+                <span class="feature-icon" aria-hidden="true">💎</span>
+            </div>
+            <p class="description">A final rework on the Palladium textures to reinforce its theme. The new textures will make the material feel more cohesive and visually distinct.</p>
+            <div class="details-box">
+                <h4>Feature Breakdown</h4>
+                <ul>
+                    <li>Complete texture overhaul for Palladium items and blocks</li>
+                    <li>Reinforces the theme and visual identity</li>
+                    <li>Final implementation — no more changes after this!</li>
+                    <li>Designed to match the aesthetic of the Galosphere mod</li>
+                </ul>
+                <div class="tags">
+                    <span class="tag silver">Retexture</span>
+                    <span class="tag">Palladium</span>
+                    <span class="tag">Final</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- DAY 13 -->
+        <article class="day-card fade-in" id="day-13" aria-labelledby="title-13">
+            <div class="day-header">
+                <span class="day-number">13</span>
+                <h2 class="day-title" id="title-13">Block Comparator</h2>
+                <span class="feature-icon" aria-hidden="true">🔴</span>
+            </div>
+            <p class="description">A new redstone component that compares if a block is the same as another, and it outputs a redstone signal based on how similar it is. A game-changer for advanced redstone engineers.</p>
+            <div class="details-box">
+                <h4>Feature Breakdown</h4>
+                <ul>
+                    <li>Compares two blocks and outputs a signal based on similarity</li>
+                    <li>Signal strength scales with how similar the blocks are</li>
+                    <li>Perfect for advanced sorting and detection systems</li>
+                    <li>Final implementation — ready for release!</li>
+                </ul>
+                <div class="tags">
+                    <span class="tag red">Redstone</span>
+                    <span class="tag">Logic</span>
+                    <span class="tag">Final</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- DAY 14 -->
+        <article class="day-card fade-in" id="day-14" aria-labelledby="title-14">
+            <div class="day-header">
+                <span class="day-number">14</span>
+                <h2 class="day-title" id="title-14">Relay</h2>
+                <span class="feature-icon" aria-hidden="true">📡</span>
+            </div>
+            <p class="description">A new block that can be crafted with Palladium which copies the redstone signal from one end to another. Perfect for transmitting signals across long distances or through walls without losing strength.</p>
+            <div class="details-box">
+                <h4>Feature Breakdown</h4>
+                <ul>
+                    <li>Copies and relays redstone signals from one side to another</li>
+                    <li>Crafted using Palladium</li>
+                    <li>Maintains signal strength over long distances</li>
+                    <li>Ideal for compact and efficient redstone circuits</li>
+                </ul>
+                <div class="tags">
+                    <span class="tag aqua">Redstone</span>
+                    <span class="tag">Utility</span>
+                    <span class="tag">Palladium</span>
+                </div>
+            </div>
+        </article>
+
+    </main>
+
+    <footer>
+        <p>GALOSPHERE - UNWRAPPED &nbsp;|&nbsp; Made with <span class="heart" aria-hidden="true">♥</span> for the Minecraft community</p>
+        <p style="margin-top: 10px; font-size: 0.8rem; opacity: 0.6;">More features coming in future updates. Stay tuned!</p>
+    </footer>
+
+    <script>
+        // --- STAR GENERATOR ---
+        (function() {
+            const container = document.getElementById('star-container');
+            const fragment = document.createDocumentFragment();
+            for (let i = 0; i < 40; i++) {
+                const star = document.createElement('div');
+                star.className = 'star' + (Math.random() > 0.8 ? ' bright' : '');
+                const size = Math.random() * 2 + 1;
+                star.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;width:${size}px;height:${size}px;--duration:${Math.random()*6+2}s;--delay:${Math.random()*5}s;`;
+                fragment.appendChild(star);
+            }
+            container.appendChild(fragment);
+        })();
+
+        // --- SCROLL FADE-IN ---
+        (function() {
+            if (!('IntersectionObserver' in window)) {
+                document.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
+                return;
+            }
+            const observer = new IntersectionObserver((entries, obs) => {
+                for (const entry of entries) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        obs.unobserve(entry.target);
+                    }
+                }
+            }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+        })();
+
+        // --- NAV: PRECISE SCROLL + HIGHLIGHTING + SMOOTH MOMENTUM WHEEL SCROLL ---
+        (function() {
+            const nav = document.querySelector('.feature-nav');
+            const navLinks = Array.from(document.querySelectorAll('.nav-link'));
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            const linkById = {};
+            navLinks.forEach(link => {
+                linkById[link.getAttribute('href').slice(1)] = link;
+            });
+
+            const cards = Array.from(document.querySelectorAll('.day-card'));
+            const cardData = cards.map(card => ({ id: card.id, el: card }));
+
+            function getNavOffset() {
+                return nav ? nav.offsetHeight + 16 : 72;
+            }
+
+            let lockedId = null;
+            let lockTimer = null;
+
+            function setActiveLink(id) {
+                navLinks.forEach(link => {
+                    const isActive = link.getAttribute('href') === '#' + id;
+                    link.classList.toggle('active', isActive);
+                    if (isActive) {
+                        link.setAttribute('aria-current', 'true');
+                    } else {
+                        link.removeAttribute('aria-current');
+                    }
+                });
+                const activeLink = linkById[id];
+                if (activeLink && nav) {
+                    const navRect = nav.getBoundingClientRect();
+                    const linkRect = activeLink.getBoundingClientRect();
+                    if (linkRect.left < navRect.left || linkRect.right > navRect.right) {
+                        const targetScroll = nav.scrollLeft + (linkRect.left - navRect.left) - (navRect.width / 2) + (linkRect.width / 2);
+                        nav.scrollTo({ left: targetScroll, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+                    }
+                }
+            }
+
+            function computeActiveId() {
+                const offset = getNavOffset();
+                const threshold = window.innerHeight * 0.35;
+                let bestId = cardData[0] ? cardData[0].id : null;
+                let bestDelta = Infinity;
+
+                for (const { id, el } of cardData) {
+                    const top = el.getBoundingClientRect().top;
+                    const delta = Math.abs(top - offset);
+                    if (top <= offset + threshold && delta < bestDelta) {
+                        bestDelta = delta;
+                        bestId = id;
+                    }
+                }
+                return bestId;
+            }
+
+            function updateActiveFromScroll() {
+                if (lockedId) return;
+                const id = computeActiveId();
+                if (id) setActiveLink(id);
+            }
+
+            let ticking = false;
+            window.addEventListener('scroll', () => {
+                if (!ticking) {
+                    window.requestAnimationFrame(() => {
+                        updateActiveFromScroll();
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            }, { passive: true });
+
+            function scrollToFeature(targetId) {
+                const target = document.getElementById(targetId);
+                if (!target) return;
+                const offset = getNavOffset();
+                const targetTop = target.getBoundingClientRect().top + window.pageYOffset - offset;
+
+                lockedId = targetId;
+                setActiveLink(targetId);
+
+                window.scrollTo({
+                    top: targetTop,
+                    behavior: prefersReducedMotion ? 'auto' : 'smooth'
+                });
+
+                clearTimeout(lockTimer);
+                const settleTime = prefersReducedMotion ? 50 : 700;
+                lockTimer = setTimeout(() => {
+                    lockedId = null;
+                    updateActiveFromScroll();
+                }, settleTime);
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').slice(1);
+                    scrollToFeature(targetId);
+                    history.pushState(null, '', '#' + targetId);
+                });
+            });
+
+            // --- SMOOTH MOMENTUM WHEEL SCROLLING ---
+            // Instead of applying raw deltaY directly (which is jumpy on most mice),
+            // we accumulate a velocity and animate scrollLeft toward a target using
+            // requestAnimationFrame with eased deceleration (exponential smoothing).
+            let targetScrollLeft = nav.scrollLeft;
+            let velocity = 0;
+            let rafId = null;
+            let isAnimating = false;
+
+            // Tuning constants
+            const WHEEL_MULTIPLIER = 1.2;   // how much each wheel notch contributes to target
+            const SMOOTHING = 0.16;         // 0..1, higher = snappier, lower = floatier
+            const VELOCITY_DAMPING = 0.85;  // how quickly extra momentum fades
+
+            function clampScroll(val) {
+                const max = nav.scrollWidth - nav.clientWidth;
+                if (val < 0) return 0;
+                if (val > max) return max;
+                return val;
+            }
+
+            function animateNavScroll() {
+                // Eased approach: move a fraction of the remaining distance each frame.
+                const current = nav.scrollLeft;
+                const diff = targetScrollLeft - current;
+
+                if (Math.abs(diff) < 0.5 && Math.abs(velocity) < 0.5) {
+                    nav.scrollLeft = targetScrollLeft;
+                    isAnimating = false;
+                    rafId = null;
+                    return;
+                }
+
+                // Apply exponential smoothing to the position
+                const step = diff * SMOOTHING + velocity;
+                nav.scrollLeft = clampScroll(current + step);
+
+                // Dampen velocity
+                velocity *= VELOCITY_DAMPING;
+                if (Math.abs(velocity) < 0.1) velocity = 0;
+
+                rafId = requestAnimationFrame(animateNavScroll);
+            }
+
+            function startAnimation() {
+                if (!isAnimating) {
+                    isAnimating = true;
+                    rafId = requestAnimationFrame(animateNavScroll);
+                }
+            }
+
+            nav.addEventListener('wheel', (e) => {
+                if (nav.scrollWidth <= nav.clientWidth) return;
+
+                const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+
+                // Edge detection: if we're at an edge and scrolling further in that
+                // direction, let the page scroll normally.
+                const atLeft = nav.scrollLeft <= 0 && targetScrollLeft <= 0;
+                const atRight = (nav.scrollLeft + nav.clientWidth >= nav.scrollWidth - 1)
+                                && (targetScrollLeft >= nav.scrollWidth - nav.clientWidth);
+                if ((delta < 0 && atLeft) || (delta > 0 && atRight)) {
+                    return;
+                }
+
+                e.preventDefault();
+
+                // Accumulate target position with multiplier for a natural feel
+                targetScrollLeft = clampScroll(targetScrollLeft + delta * WHEEL_MULTIPLIER);
+
+                // Add a bit of velocity for momentum on sharp flicks
+                velocity += delta * 0.15;
+
+                startAnimation();
+            }, { passive: false });
+
+            // If the user manually drags the scrollbar or swipes, sync our target
+            nav.addEventListener('scroll', () => {
+                if (!isAnimating) {
+                    targetScrollLeft = nav.scrollLeft;
+                }
+            }, { passive: true });
+
+            // Initial active state
+            updateActiveFromScroll();
+
+            if (window.location.hash) {
+                const initialTarget = window.location.hash.slice(1);
+                window.addEventListener('load', () => {
+                    setTimeout(() => scrollToFeature(initialTarget), 100);
+                });
+            }
+        })();
+    </script>
+
+</body>
+</html>
